@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"github.com/ChristianMe96/simple-go-api/api"
+	"github.com/ChristianMe96/simple-go-api/internal/tools"
 	log "github.com/sirupsen/logrus"
 )
 
 var UnAuthorizedError = errors.New("invalid username or Token")
 
-func AuthorizationEvent(next http.Handler) http.Handler {
+func Authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		username := r.URL.Query().Get("username")
 		token := r.Header.Get("Authorization")
@@ -29,7 +30,7 @@ func AuthorizationEvent(next http.Handler) http.Handler {
 			return
 		}
 
-		var loginDetails = *tools.LoginDetails
+		var loginDetails *tools.LoginDetails
 		loginDetails = (*database).GetUserLoginDetails(username)
 
 		if loginDetails == nil || (token != (*loginDetails).AuthToken) {
